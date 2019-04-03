@@ -1,13 +1,16 @@
-###Jo Hyuk Jun
+### Jo Hyuk Jun
 
-##Image Crop
 
-#example
+## Image Crop
+
+
+# example
 - Input Image
-![InputImage](./inputImage/image.png)
+![input](https://user-images.githubusercontent.com/39693451/55493731-7889c280-5674-11e9-9864-2d58ca3b2c6f.PNG)
+
 
 - Output Image
-![OutputImage](./outputImage/output.png)
+![output](https://user-images.githubusercontent.com/39693451/55493765-83dcee00-5674-11e9-95db-70f30d619626.png)
 
 
 
