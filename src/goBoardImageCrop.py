@@ -2,9 +2,11 @@ import imutils
 import cv2
 import datetime
 import numpy as np
+import os
 
-
-image = cv2.imread("C:/Python/Image/image.png")
+inputImagePath = os.path.abspath("./src/inputImage/input.png")
+outputImagePath = os.path.abspath("./src/outputImage/")
+image = cv2.imread(inputImagePath)
 image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 image_gray_blurred = cv2.GaussianBlur(image_gray, (5, 5), 0)
 
@@ -76,7 +78,7 @@ for c in cnts:
         continue
 
     now = datetime.datetime.now().strftime("%d_%H-%M-%S")
-    cv2.imwrite("C:/Python/Image/output/" + str(now) + ".png", image[y: y + h, x: x + w])
+    cv2.imwrite(str(outputImagePath) + str(now) + ".png", image[y: y + h, x: x + w])
     cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
     cv2.imshow("image", image)
     cv2.waitKey(0)
