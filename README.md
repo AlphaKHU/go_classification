@@ -1,25 +1,39 @@
-# Jo Hyuk Jun
+# Go Board Classifier
+- 멀티미디어 시스템 2019년도 1학기 이미지 classifier 을 위한 레파지토립니다.
 
 
-## Go Board Image Crop
-- The code crops the go board in the digital image input frame by frame.
+### 실행 방법 및 실행 옵션
+- Input
+
+  ```python
+  $ python goClassifer.py
+  ```
+
+- inputImage 디렉토리에서 이미지를 읽어옵니다.
+
+- Output
+
+  ```
+    ('[WR]', 0.8660315768436481, '[HR]', 4.390917074394681)
+    ('[WR]', 1.5322097128772234, '[HR]', 3.6381884330698786)
+    ('[WR]', 2.1317700353074414, '[HR]', 2.0072763768661397)
+    ('[WR]', 46.83232296316035, '[HR]', 92.08380378873416)
+    ('[WR]', 0.1998534408100726, '[HR]', 0.12545477355413373)
+    ('[WR]', 3.197655052961162, '[HR]', 4.014552753732279)
+    ('[WR]', 0.9326493904470056, '[HR]', 0.37636432066240116)
+    ('[WR]', 0.13323562720671508, '[HR]', 0.6272738677706686)
+    ('[WR]', 15.721804010392379, '[HR]', 15.180027600050181)
+  ```
+
+- input 에서 읽어온 이미지를 분석하여 사각형을 검출합니다.
+- 인식한 사각형의 원본 이미지와 비율을 계산합니다.
+- 최종 출력물인 crop 이미지를 outputImage 에 저장합니다.
+
+### Requirements
+- Python 2.7
+- Module: cv2, os, datetime, numpy, imutils
 
 
-## To Do
-- Read multiple images and process them at once.
-- Identify algorithms that can better recognize the go board.
 
-
-### test
-- Input Image
-
-![input](https://user-images.githubusercontent.com/39693451/55493731-7889c280-5674-11e9-9864-2d58ca3b2c6f.PNG)
-
-
-- Output Image
-
-![output](https://user-images.githubusercontent.com/39693451/55493765-83dcee00-5674-11e9-95db-70f30d619626.png)
-
-
-
-ref : https://www.pyimagesearch.com/2016/02/08/opencv-shape-detection/
+#### Reference
+- https://www.pyimagesearch.com/2016/02/08/opencv-shape-detection/

@@ -4,27 +4,41 @@ import datetime
 import numpy as np
 import os
 
+# Save path to read and write image.
 inputImagePath = os.path.abspath("./src/inputImage/input.png")
 outputImagePath = os.path.abspath("./src/outputImage/")
-image = cv2.imread(inputImagePath)
-image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# Read image.
+originalImage = cv2.imread(inputImagePath)
+originalHeight, originalWidth, originalChanels = originalImage.shape
+originalHeight += 0.1
+originalWidth += 0.1
+
+# Gray scale image.
+image_gray = cv2.cvtColor(originalImage, cv2.COLOR_BGR2GRAY)
+
+# Laplacian transform image.
+imgae_laplacian = cv2.Laplacian(image_gray, cv2.CV_64F)
+cv2.imshow('Laplacian', imgae_laplacian)
+
+
+# Gaussian blurred image.
 image_gray_blurred = cv2.GaussianBlur(image_gray, (5, 5), 0)
 
+# Thresholid image(1 to 5).
 ret,thresh1 = cv2.threshold(image_gray_blurred,127,255,cv2.THRESH_BINARY)
 ret,thresh2 = cv2.threshold(image_gray_blurred,127,255,cv2.THRESH_BINARY_INV)
 ret,thresh3 = cv2.threshold(image_gray_blurred,127,255,cv2.THRESH_TRUNC)
 ret,thresh4 = cv2.threshold(image_gray_blurred,127,255,cv2.THRESH_TOZERO)
 ret,thresh5 = cv2.threshold(image_gray_blurred,127,255,cv2.THRESH_TOZERO_INV)
 
-images_row1 = np.hstack([image_gray_blurred, thresh1, thresh2])
+# Compare threshold image.
+images_row1 = np.hstack([image_gray, thresh1, thresh2])
 images_row2 = np.hstack([thresh3, thresh4, thresh5])
 images_combined = np.vstack((images_row1, images_row2))
-
-
 cv2.imshow('Images', images_combined)
-cv2.waitKey(0)
 
-
+# Shape detector class.
 class ShapeDetector:
     def __init__(self):
         pass
@@ -60,27 +74,33 @@ class ShapeDetector:
 		# return the name of the shape
         return shape
 
+# Initialize class.
 sd = ShapeDetector()
 
 # Find contours in the image.
 cnts, hierarchy = cv2.findContours(thresh4.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
 
-
+# Final processing image.
 for c in cnts:
     if sd.detect(c) != 'rectangle': next
     c = c.astype("float")
     c = c.astype("int")
     x, y, w, h = cv2.boundingRect(c)
-    print(w)
-    print(h)
+
+    heightRatio = (h / originalHeight) * 100
+    widthRatio = (w / originalWidth) * 100
+
+    print("[WR]", widthRatio,"[HR]", heightRatio)
     
-    if h < 700 or w < 700:
+    
+    if heightRatio < 80 or widthRatio < 40:
         continue
 
     now = datetime.datetime.now().strftime("%d_%H-%M-%S")
-    cv2.imwrite(str(outputImagePath) + str(now) + ".png", image[y: y + h, x: x + w])
-    cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
-    cv2.imshow("image", image)
-    cv2.waitKey(0)
+    cv2.imwrite(str(outputImagePath) + "/" + str(now) + ".png", originalImage[y: y + h, x: x + w])
+    cv2.rectangle(originalImage, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    cv2.imshow("image", originalImage)
+
+cv2.waitKey(0)
 
 cv2.destroyAllWindows()
