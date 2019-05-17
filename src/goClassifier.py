@@ -20,33 +20,6 @@ originalHeight, originalWidth, originalChanels = originalImage.shape
 originalHeight += 0.1
 originalWidth += 0.1
 
-# Gray scale image.
-image_gray = cv2.cvtColor(originalImage, cv2.COLOR_BGR2GRAY)
-
-# HSV image.
-image_hsv = cv2.cvtColor(originalImage, cv2.COLOR_BGR2HSV)
-
-# Laplacian transform image.
-imgae_laplacian = cv2.Laplacian(image_gray, cv2.CV_64F)
-cv2.imshow('Laplacian', imgae_laplacian)
-
-
-# Gaussian blurred image.
-image_gray_blurred = cv2.GaussianBlur(image_gray, (5, 5), 0)
-
-# Thresholid image(1 to 5).
-ret,thresh1 = cv2.threshold(image_gray_blurred,127,255,cv2.THRESH_BINARY)
-ret,thresh2 = cv2.threshold(image_gray_blurred,127,255,cv2.THRESH_BINARY_INV)
-ret,thresh3 = cv2.threshold(image_gray_blurred,127,255,cv2.THRESH_TRUNC)
-ret,thresh4 = cv2.threshold(image_gray_blurred,127,255,cv2.THRESH_TOZERO)
-ret,thresh5 = cv2.threshold(image_gray_blurred,127,255,cv2.THRESH_TOZERO_INV)
-
-# Compare threshold image.
-images_row1 = np.hstack([image_gray, thresh1, thresh2])
-images_row2 = np.hstack([thresh3, thresh4, thresh5])
-images_combined = np.vstack((images_row1, images_row2))
-cv2.imshow('Images', images_combined)
-
 # Shape detector class.
 class ShapeDetector:
     def __init__(self):
@@ -83,6 +56,37 @@ class ShapeDetector:
 		# return the name of the shape
         return shape
 
+# Preprocessing image def.
+def preprocessingImage(originalImg):
+    # Gray scale image.
+    image_gray = cv2.cvtColor(originalImg, cv2.COLOR_BGR2GRAY)
+
+    # HSV image.
+    image_hsv = cv2.cvtColor(originalImg, cv2.COLOR_BGR2HSV)
+
+    # Laplacian transform image.
+    imgae_laplacian = cv2.Laplacian(image_gray, cv2.CV_64F)
+    cv2.imshow('Laplacian', imgae_laplacian)
+
+
+    # Gaussian blurred image.
+    image_gray_blurred = cv2.GaussianBlur(image_gray, (5, 5), 0)
+
+    # Thresholid image(1 to 5).
+    ret,thresh1 = cv2.threshold(image_gray_blurred,127,255,cv2.THRESH_BINARY)
+    ret,thresh2 = cv2.threshold(image_gray_blurred,127,255,cv2.THRESH_BINARY_INV)
+    ret,thresh3 = cv2.threshold(image_gray_blurred,127,255,cv2.THRESH_TRUNC)
+    ret,thresh4 = cv2.threshold(image_gray_blurred,127,255,cv2.THRESH_TOZERO)
+    ret,thresh5 = cv2.threshold(image_gray_blurred,127,255,cv2.THRESH_TOZERO_INV)
+
+    # Compare threshold image.
+    images_row1 = np.hstack([image_gray, thresh1, thresh2])
+    images_row2 = np.hstack([thresh3, thresh4, thresh5])
+    images_combined = np.vstack((images_row1, images_row2))
+    cv2.imshow('Images', images_combined)
+
+    return thresh4
+
 
 # Processing image def.
 def processingImage(orginalImg, preprocessedImg):
@@ -113,7 +117,7 @@ def processingImage(orginalImg, preprocessedImg):
         cv2.rectangle(orginalImg, (x, y), (x + w, y + h), (0, 255, 0), 2)
         cv2.imshow("image", orginalImg)
 
-processingImage(originalImage, thresh4)
+processingImage(originalImage, preprocessingImage(originalImage))
 
 
 cv2.waitKey(0)
