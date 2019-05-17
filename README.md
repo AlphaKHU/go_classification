@@ -9,7 +9,7 @@
   $ python goClassifer.py
   ```
 
-- inputImage 디렉토리에서 이미지를 읽어옵니다.
+    - inputImage 디렉토리에서 이미지를 읽어옵니다.
 
 - Output
 
@@ -25,9 +25,9 @@
     ('[WR]', 15.721804010392379, '[HR]', 15.180027600050181)
   ```
 
-- input 에서 읽어온 이미지를 분석하여 사각형을 검출합니다.
-- 인식한 사각형의 원본 이미지와 비율을 계산합니다.
-- 최종 출력물인 crop 이미지를 outputImage 에 저장합니다.
+    - input 에서 읽어온 이미지를 분석하여 사각형을 검출합니다.
+    - 인식한 사각형의 원본 이미지와 비율을 계산합니다.
+    - 최종 출력물인 crop 이미지를 outputImage 에 저장합니다.
 
 ### Requirements
 - Python 2.7
@@ -37,3 +37,4 @@
 
 #### Reference
 - https://www.pyimagesearch.com/2016/02/08/opencv-shape-detection/
+- https://docs.opencv.org/

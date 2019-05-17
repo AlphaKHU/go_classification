@@ -1,12 +1,18 @@
+import os
+import datetime
 import imutils
 import cv2
-import datetime
 import numpy as np
-import os
 
 # Save path to read and write image.
-inputImagePath = os.path.abspath("./src/inputImage/input.png")
+inputImagePath = os.path.abspath("./src/inputImage/frame0.png")
 outputImagePath = os.path.abspath("./src/outputImage/")
+
+# Save path directory.
+inputFileDir = os.path.abspath("./src/inputImage/")
+inputFileDirList = os.listdir(inputFileDir)
+
+print(inputFileDirList)
 
 # Read image.
 originalImage = cv2.imread(inputImagePath)
@@ -16,6 +22,9 @@ originalWidth += 0.1
 
 # Gray scale image.
 image_gray = cv2.cvtColor(originalImage, cv2.COLOR_BGR2GRAY)
+
+# HSV image.
+image_hsv = cv2.cvtColor(originalImage, cv2.COLOR_BGR2HSV)
 
 # Laplacian transform image.
 imgae_laplacian = cv2.Laplacian(image_gray, cv2.CV_64F)
@@ -74,32 +83,38 @@ class ShapeDetector:
 		# return the name of the shape
         return shape
 
-# Initialize class.
-sd = ShapeDetector()
 
-# Find contours in the image.
-cnts, hierarchy = cv2.findContours(thresh4.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+# Processing image def.
+def processingImage(orginalImg, preprocessedImg):
+    # Initialize class.
+    sd = ShapeDetector()
 
-# Final processing image.
-for c in cnts:
-    if sd.detect(c) != 'rectangle': next
-    c = c.astype("float")
-    c = c.astype("int")
-    x, y, w, h = cv2.boundingRect(c)
+    # Find contours in the image.
+    cnts, hierarchy = cv2.findContours(preprocessedImg.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
 
-    heightRatio = (h / originalHeight) * 100
-    widthRatio = (w / originalWidth) * 100
+    # Final processing image.
+    for c in cnts:
+        if sd.detect(c) != 'rectangle': next
+        c = c.astype("float")
+        c = c.astype("int")
+        x, y, w, h = cv2.boundingRect(c)
 
-    print("[WR]", widthRatio,"[HR]", heightRatio)
-    
-    
-    if heightRatio < 80 or widthRatio < 40:
-        continue
+        heightRatio = (h / originalHeight) * 100
+        widthRatio = (w / originalWidth) * 100
 
-    now = datetime.datetime.now().strftime("%d_%H-%M-%S")
-    cv2.imwrite(str(outputImagePath) + "/" + str(now) + ".png", originalImage[y: y + h, x: x + w])
-    cv2.rectangle(originalImage, (x, y), (x + w, y + h), (0, 255, 0), 2)
-    cv2.imshow("image", originalImage)
+        print("[WR]", widthRatio,"[HR]", heightRatio)
+        
+        
+        if heightRatio < 80 or widthRatio < 40:
+            continue
+
+        now = datetime.datetime.now().strftime("%d_%H-%M-%S")
+        cv2.imwrite(str(outputImagePath) + "/" + str(now) + ".png", orginalImg[y: y + h, x: x + w])
+        cv2.rectangle(orginalImg, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        cv2.imshow("image", orginalImg)
+
+processingImage(originalImage, thresh4)
+
 
 cv2.waitKey(0)
 
