@@ -5,20 +5,18 @@ import cv2
 import numpy as np
 
 # Save path to read and write image.
-inputImagePath = os.path.abspath("./src/inputImage/frame0.png")
+#inputImagePath = os.path.abspath("./src/inputImage/")
 outputImagePath = os.path.abspath("./src/outputImage/")
 
 # Save path directory.
 inputFileDir = os.path.abspath("./src/inputImage/")
 inputFileDirList = os.listdir(inputFileDir)
+inputFileDirList.sort()
 
 print(inputFileDirList)
 
-# Read image.
-originalImage = cv2.imread(inputImagePath)
-originalHeight, originalWidth, originalChanels = originalImage.shape
-originalHeight += 0.1
-originalWidth += 0.1
+# Output count.
+outCount = 0
 
 # Shape detector class.
 class ShapeDetector:
@@ -58,15 +56,21 @@ class ShapeDetector:
 
 # Preprocessing image def.
 def preprocessingImage(originalImg):
+    # HSV image.
+    image_hsv = cv2.cvtColor(originalImg, cv2.COLOR_BGR2HSV)
+    lowerValue = (40 - 5, 30, 50)
+    upperValue = (40 + 5, 255, 255)
+    image_hsvMask = cv2.inRange(image_hsv, lowerValue, upperValue)
+    image_hsvResult = cv2.bitwise_and(image_hsv, image_hsv, mask = image_hsvMask)
+    image_hsvResult = cv2.cvtColor(image_hsvResult, cv2.COLOR_HSV2BGR)
+    cv2.imshow('hsvMasked', image_hsvResult)
+
     # Gray scale image.
     image_gray = cv2.cvtColor(originalImg, cv2.COLOR_BGR2GRAY)
 
-    # HSV image.
-    image_hsv = cv2.cvtColor(originalImg, cv2.COLOR_BGR2HSV)
-
     # Laplacian transform image.
-    imgae_laplacian = cv2.Laplacian(image_gray, cv2.CV_64F)
-    cv2.imshow('Laplacian', imgae_laplacian)
+    #imgae_laplacian = cv2.Laplacian(image_gray, cv2.CV_64F)
+    #cv2.imshow('Laplacian', imgae_laplacian)
 
 
     # Gaussian blurred image.
@@ -96,6 +100,8 @@ def processingImage(orginalImg, preprocessedImg):
     # Find contours in the image.
     cnts, hierarchy = cv2.findContours(preprocessedImg.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
 
+    global outCount
+
     # Final processing image.
     for c in cnts:
         if sd.detect(c) != 'rectangle': next
@@ -113,11 +119,20 @@ def processingImage(orginalImg, preprocessedImg):
             continue
 
         now = datetime.datetime.now().strftime("%d_%H-%M-%S")
-        cv2.imwrite(str(outputImagePath) + "/" + str(now) + ".png", orginalImg[y: y + h, x: x + w])
+
+        cv2.imwrite(str(outputImagePath) + "/" + "ProcessedFrame" + str(outCount) + ".png", orginalImg[y: y + h, x: x + w])
+        outCount += 1
         cv2.rectangle(orginalImg, (x, y), (x + w, y + h), (0, 255, 0), 2)
         cv2.imshow("image", orginalImg)
 
-processingImage(originalImage, preprocessingImage(originalImage))
+for imageName in inputFileDirList:
+    # Read Image.
+    originalImage = cv2.imread(str(inputFileDir) + "/" + str(imageName))
+    originalHeight, originalWidth, originalChanels = originalImage.shape
+    originalHeight += 0.1
+    originalWidth += 0.1
+
+    processingImage(originalImage, preprocessingImage(originalImage))
 
 
 cv2.waitKey(0)
