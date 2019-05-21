@@ -4,17 +4,6 @@ import imutils
 import cv2
 import numpy as np
 
-# Save path to read and write image.
-#inputImagePath = os.path.abspath("./src/inputImage/")
-outputImagePath = os.path.abspath("./src/outputImage/")
-
-# Save path directory.
-inputFileDir = os.path.abspath("./src/inputImage/")
-inputFileDirList = os.listdir(inputFileDir)
-inputFileDirList.sort()
-
-print(inputFileDirList)
-
 # Output count.
 outCount = 0
 
@@ -93,7 +82,7 @@ def preprocessingImage(originalImg):
 
 
 # Processing image def.
-def processingImage(orginalImg, preprocessedImg):
+def processingImage(orginalImg, preprocessedImg, originalHeight, originalWidth, outputImagePath):
     # Initialize class.
     sd = ShapeDetector()
 
@@ -124,15 +113,6 @@ def processingImage(orginalImg, preprocessedImg):
         outCount += 1
         cv2.rectangle(orginalImg, (x, y), (x + w, y + h), (0, 255, 0), 2)
         cv2.imshow("image", orginalImg)
-
-for imageName in inputFileDirList:
-    # Read Image.
-    originalImage = cv2.imread(str(inputFileDir) + "/" + str(imageName))
-    originalHeight, originalWidth, originalChanels = originalImage.shape
-    originalHeight += 0.1
-    originalWidth += 0.1
-
-    processingImage(originalImage, preprocessingImage(originalImage))
 
 
 cv2.waitKey(0)

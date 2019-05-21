@@ -1,5 +1,6 @@
 ## JO HYUK JUN ##
 
+/__pycache__
 *.vscode
 *.DS_Store
 *.PNG
